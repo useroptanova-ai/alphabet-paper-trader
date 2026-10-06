@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alphabet Paper-Trading Simulator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to dashboard</a>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Hermes Simulator</p>
+      <h1>Alphabet Paper-Trading Simulator</h1>
+    </div>
+    <div class="safety-badge" role="status">PAPER TRADING — NO REAL MONEY</div>
+  </header>
+
+  <nav class="tabs" aria-label="Simulator sections">
+    <button class="tab is-active" data-target="dashboard">Dashboard</button>
+    <button class="tab" data-target="trade">Trade</button>
+    <button class="tab" data-target="portfolio">Portfolio</button>
+    <button class="tab" data-target="journal">Journal</button>
+    <button class="tab" data-target="analytics">Analytics</button>
+    <button class="tab" data-target="research">Alphabet Research</button>
+    <button class="tab" data-target="settings">Settings</button>
+  </nav>
+
+  <main id="main">
+    <section id="dashboard" class="panel active-panel" aria-labelledby="dashboard-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Simulated account</p><h2 id="dashboard-title">Dashboard</h2></div>
+        <p id="quoteStamp" class="muted"></p>
+      </div>
+      <div class="metric-grid" id="metrics"></div>
+      <div class="two-column">
+        <article class="card">
+          <h3>Portfolio equity history</h3>
+          <canvas id="equityChart" width="900" height="320" aria-label="Portfolio equity history chart" role="img"></canvas>
+        </article>
+        <article class="card">
+          <h3>Quote controls</h3>
+          <p class="muted">Manual/demo quote mode. This value is used only as a simulation reference price.</p>
+          <form id="quoteForm" class="stack">
+            <label>Ticker <select name="symbol"><option>GOOGL</option><option>GOOG</option></select></label>
+            <label>Reference price <input name="price" type="number" step="0.01" min="0.01" required></label>
+            <label>Previous close <input name="previousClose" type="number" step="0.01" min="0.01"></label>
+            <button type="submit">Update simulated quote</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <section id="trade" class="panel" aria-labelledby="trade-title">
+      <div class="section-heading"><div><p class="eyebrow">Order ticket</p><h2 id="trade-title">Simulated trade</h2></div></div>
+      <form id="orderForm" class="card form-grid">
+        <label>Ticker <select name="symbol"><option>GOOGL</option><option>GOOG</option></select></label>
+        <label>Side <select name="side"><option>BUY</option><option>SELL</option></select></label>
+        <label>Shares <input name="quantity" type="number" min="0.000001" step="0.000001" required></label>
+        <label>Reference price <input name="priceView" readonly></label>
+        <label class="wide">Optional note <input name="note" maxlength="180"></label>
+        <label class="wide">Hermes reasoning <textarea name="hermesReasoning" rows="4" placeholder="Record investment reasoning before confirming the simulated order."></textarea></label>
+        <div class="wide summary" id="orderSummary">Estimated simulated value: $0.00. Real money involved: $0.</div>
+        <button class="primary" type="submit">Confirm simulation</button>
+      </form>
+    </section>
+
+    <section id="portfolio" class="panel" aria-labelledby="portfolio-title">
+      <div class="section-heading"><div><p class="eyebrow">Ledger</p><h2 id="portfolio-title">Portfolio and trades</h2></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Time</th><th>Ticker</th><th>Side</th><th>Qty</th><th>Price</th><th>Total</th><th>Cash after</th><th>Position after</th></tr></thead><tbody id="tradeRows"></tbody></table></div>
+    </section>
+
+    <section id="journal" class="panel" aria-labelledby="journal-title">
+      <div class="section-heading"><div><p class="eyebrow">Decision quality</p><h2 id="journal-title">Hermes decision journal</h2></div></div>
+      <form id="journalForm" class="card form-grid">
+        <label>Ticker <select name="symbol"><option>GOOGL</option><option>GOOG</option></select></label>
+        <label>Stance <select name="stance"><option>WATCH</option><option>BUY</option><option>HOLD</option><option>SELL</option></select></label>
+        <label>Confidence 0–100 <input name="confidence" type="number" min="0" max="100" value="50"></label>
+        <label>Time horizon <input name="horizon" placeholder="e.g. 3 months"></label>
+        <label class="wide">Thesis <textarea name="thesis" rows="3" required></textarea></label>
+        <label class="wide">Expected upside <input name="expectedUpside"></label>
+        <label class="wide">Downside / risk <input name="downsideRisk"></label>
+        <label class="wide">Invalidation condition <input name="invalidation"></label>
+        <button class="primary" type="submit">Save journal entry</button>
+      </form>
+      <div id="journalRows" class="entry-list"></div>
+    </section>
+
+    <section id="analytics" class="panel" aria-labelledby="analytics-title">
+      <div class="section-heading"><div><p class="eyebrow">Performance</p><h2 id="analytics-title">Analytics and benchmarks</h2></div></div>
+      <div class="metric-grid" id="analyticsMetrics"></div>
+      <article class="card"><h3>Benchmarks</h3><div id="benchmarkBox" class="benchmark"></div></article>
+    </section>
+
+    <section id="research" class="panel" aria-labelledby="research-title">
+      <div class="section-heading"><div><p class="eyebrow">Alphabet facts</p><h2 id="research-title">Alphabet research panel</h2></div></div>
+      <div class="research-grid" id="researchGrid"></div>
+      <p class="muted">Fundamentals and news are shown as Unavailable in this static version unless a local backend is added. Missing data is not fabricated.</p>
+    </section>
+
+    <section id="settings" class="panel" aria-labelledby="settings-title">
+      <div class="section-heading"><div><p class="eyebrow">Configuration</p><h2 id="settings-title">Settings</h2></div></div>
+      <article class="card stack">
+        <p>Starting cash is USD 10,000 by default. Resetting deletes local simulated trades and journal entries in this browser only.</p>
+        <button id="resetBtn" class="danger" type="button">Reset local simulator</button>
+        <p class="muted">No brokerage credentials are requested or stored.</p>
+      </article>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
