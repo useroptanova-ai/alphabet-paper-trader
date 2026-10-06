@@ -70,10 +70,13 @@
     if (!['BUY', 'SELL'].includes(side)) throw new Error('Side must be BUY or SELL');
     if (!Number.isFinite(quantity) || quantity <= 0) throw new Error('Quantity must be greater than zero');
     const quote = quoteFor(state, symbol);
-    const gross = roundMoney(quantity * quote.price);
+    const roundedQuantity = roundShares(quantity);
+    if (roundedQuantity <= 0) throw new Error('Quantity is below the simulator precision limit');
+    const gross = roundMoney(roundedQuantity * quote.price);
+    if (gross < 0.01) throw new Error('Simulated transaction value must be at least $0.01');
     if (side === 'BUY' && gross > state.cash + 0.0001) throw new Error('Insufficient virtual cash');
-    if (side === 'SELL' && quantity > getPosition(state, symbol).shares + 0.000001) throw new Error('Cannot sell more shares than the simulated position');
-    return { symbol, side, quantity: roundShares(quantity), price: quote.price, gross };
+    if (side === 'SELL' && roundedQuantity > getPosition(state, symbol).shares + 0.000001) throw new Error('Cannot sell more shares than the simulated position');
+    return { symbol, side, quantity: roundedQuantity, price: quote.price, gross };
   }
 
   function applyOrder(state, order, now = new Date().toISOString()) {
