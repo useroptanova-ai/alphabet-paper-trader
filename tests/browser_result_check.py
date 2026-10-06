@@ -1,6 +1,7 @@
+import os
 from playwright.sync_api import sync_playwright, expect
 
-URL = 'http://127.0.0.1:8766/'
+URL = os.environ.get('SIMULATOR_URL', 'http://127.0.0.1:8766/')
 STORE = 'alphabetPaperTrader.v1'
 
 with sync_playwright() as p:
