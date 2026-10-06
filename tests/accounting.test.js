@@ -21,6 +21,7 @@ assert.strictEqual(s.positions.GOOGL.shares, 0);
 assert.strictEqual(s.positions.GOOGL.averageCost, 0);
 assert.strictEqual(s.realizedPL, 200);
 assert.throws(() => Core.validateOrder(s, { symbol: 'GOOGL', side: 'BUY', quantity: 0 }), /greater than zero/);
+assert.throws(() => Core.validateOrder(s, { symbol: 'GOOGL', side: 'BUY', quantity: 0.000001 }), /at least \$0\.01/);
 s = Core.addJournalEntry(s, { symbol: 'GOOG', stance: 'WATCH', thesis: 'Observe AI/cloud momentum', confidence: 75 });
 assert.strictEqual(s.journal.length, 1);
 const a = Core.analytics(s);
